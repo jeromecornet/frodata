@@ -5,7 +5,7 @@ module FrOData
       # Returns the property value, properly typecast
       # @return [BigDecimal,nil]
       def value
-        if (@value.nil? || @value.empty?) && (strict? && allows_nil?)
+        if (@value.nil? || @value.empty?) && ((strict? && allows_nil?) || ! strict?)
           nil
         else
           BigDecimal(@value)
@@ -15,8 +15,12 @@ module FrOData
       # Sets the property value
       # @params new_value something BigDecimal() can parse
       def value=(new_value)
-        validate(BigDecimal(new_value.to_s))
-        @value = new_value.to_s
+        if new_value.present?
+          validate(BigDecimal(new_value.to_s))
+          @value = new_value.to_s
+        else
+          @value =  nil
+        end        
       end
 
       # The FrOData type name
